@@ -25,7 +25,7 @@ export default function LoginForm() {
           placeholder="Email address"
           {...register("email", {
             required: true,
-            pattern: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
+            pattern: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/,
           })}
           error={
             (errors.email?.type === "required" && "Email is required") ||
