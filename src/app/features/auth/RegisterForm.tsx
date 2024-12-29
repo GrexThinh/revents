@@ -2,12 +2,14 @@ import ModalWrapper from "../../common/modals/ModalWrapper";
 import { FieldValues, useForm } from "react-hook-form";
 import { useAppDispatch } from "../../store/store";
 import { closeModal } from "../../common/modals/modalSlice";
-import { Button, Divider, Form, Label } from "semantic-ui-react";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { Button, Form, Label } from "semantic-ui-react";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "../../config/firebase";
-import SocialLogin from "./SocialLogin";
+import { useFirestore } from "../../hooks/firestore/useFirestore";
+import { Timestamp } from "firebase/firestore";
 
-export default function LoginForm() {
+export default function RegisterForm() {
+  const { set } = useFirestore("profiles");
   const {
     register,
     handleSubmit,
@@ -18,7 +20,19 @@ export default function LoginForm() {
 
   async function onSubmit(data: FieldValues) {
     try {
-      await signInWithEmailAndPassword(auth, data.email, data.password);
+      const userCreds = await createUserWithEmailAndPassword(
+        auth,
+        data.email,
+        data.password
+      );
+      await updateProfile(userCreds.user, {
+        displayName: data.displayName,
+      });
+      await set(userCreds.user.uid, {
+        displayName: data.displayName,
+        email: data.email,
+        createdAt: Timestamp.now(),
+      });
       dispatch(closeModal());
     } catch (error: any) {
       setError("root.serverError", {
@@ -28,8 +42,14 @@ export default function LoginForm() {
     }
   }
   return (
-    <ModalWrapper header="Sign into re-vents" size="mini">
+    <ModalWrapper header="Register to re-vents">
       <Form onSubmit={handleSubmit(onSubmit)}>
+        <Form.Input
+          defaultValue=""
+          placeholder="Display name"
+          {...register("displayName", { required: true })}
+          error={errors.displayName && "DisplayName is required"}
+        />
         <Form.Input
           defaultValue=""
           placeholder="Email address"
@@ -64,10 +84,8 @@ export default function LoginForm() {
           fluid
           size="large"
           color="teal"
-          content="Login"
+          content="Register"
         />
-        <Divider horizontal>Or</Divider>
-        <SocialLogin />
       </Form>
     </ModalWrapper>
   );
