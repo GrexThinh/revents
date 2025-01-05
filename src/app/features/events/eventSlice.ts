@@ -6,6 +6,7 @@ import {
   GenericActions,
   GenericState,
 } from "../../store/genericSlice";
+import { auth } from "../../config/firebase";
 
 type State = {
   data: AppEvent[];
@@ -28,7 +29,12 @@ export const eventSlice = createGenericSlice({
         let eventArray: AppEvent[] = [];
         Array.isArray(events) ? (eventArray = events) : eventArray.push(events);
         const mapped = eventArray.map((e: any) => {
-          return { ...e, date: (e.date as Timestamp).toDate().toISOString() };
+          return {
+            ...e,
+            date: (e.date as Timestamp).toDate().toISOString(),
+            isHost: auth.currentUser?.uid === e.hostUid,
+            isGoing: e.attendeeIds?.includes(auth.currentUser?.uid),
+          };
         });
         return { payload: mapped };
       },

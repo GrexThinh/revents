@@ -2,6 +2,7 @@ import { Tab } from "semantic-ui-react";
 import { Profile } from "../../types/profile";
 import ProfileAbout from "./ProfileAbout";
 import ProfilePhotos from "./ProfilePhotos";
+import ProfileEvents from "./ProfileEvents";
 
 type Props = {
   profile: Profile;
@@ -17,7 +18,7 @@ export default function ProfileContent({ profile }: Props) {
       menuItem: "Photos",
       render: () => <ProfilePhotos profile={profile} />,
     },
-    { menuItem: "Events", render: () => <Tab.Pane>Events</Tab.Pane> },
+    { menuItem: "Events", render: () => <ProfileEvents profile={profile} /> },
     {
       menuItem: "Followers",
       render: () => <Tab.Pane>Followers</Tab.Pane>,
