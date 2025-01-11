@@ -6,6 +6,7 @@ import { useFirestore } from "../../hooks/firestore/useFirestore";
 import { useAppSelector } from "../../store/store";
 import { CollectionOptions } from "../../hooks/firestore/types";
 import { actions } from "../events/eventSlice";
+import { format } from "date-fns/format";
 
 type Props = {
   profile: Profile;
@@ -87,7 +88,9 @@ export default function ProfileEvents({ profile }: Props) {
                 <Card.Content>
                   <Card.Header content={event.title} textAlign="center" />
                   <Card.Meta textAlign="center">
-                    <span>{event.date}</span>
+                    <span>
+                      {format(new Date(event.date), "dd MMM yyyy, h:mm a")}
+                    </span>
                   </Card.Meta>
                 </Card.Content>
               </Card>
